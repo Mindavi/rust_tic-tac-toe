@@ -1,44 +1,33 @@
 use std::io;
-// mod field;
+mod field;
 
-#[derive(Clone, Copy)]
-enum FieldState {
-    Empty,
-    Circle,
-    X,
+fn number_to_coordinate(number: usize) -> (usize, usize) {
+    match number {
+        1 => (0,0),
+        2 => (1,0),
+        3 => (2,0),
+        4 => (0,1),
+        5 => (1,1),
+        6 => (2,1),
+        7 => (0,2),
+        8 => (1,2),
+        9 => (2,2),
+        _ => (10,10),
+    }
 }
 
 fn main() {
-    let mut play_field: [[FieldState; 3]; 3] = [[FieldState::Empty; 3]; 3];
-
+    let mut field = field::Field::new();
     let stdin = io::stdin();
 
     loop {
+        println!("Player 1: where to put an X?");
         let mut input = String::new();
-        stdin.read_line(& mut input);
+        stdin.read_line(& mut input).unwrap();
 
-        input = input.trim_right().to_string();
-        let mut selected = 0;
-        match input.as_str() {
-            "1" => selected = 1,
-            "5" => selected = 5,
-            _ => println!("*"),
-        }
-
-        play_field[selected][0] = FieldState::Circle;
-
-        for row in play_field.iter() {
-            println!();
-            for point in row.iter() {
-                let mut result: char = '*';
-                match point {
-                    FieldState::Empty => result = '-',
-                    FieldState::Circle => result = 'O',
-                    FieldState::X => result = 'X',
-                }
-                print!("{} ", result); 
-            }
-            println!();
-        }
+        let selected = input.trim_right().parse::<usize>().unwrap();
+        let (x,y) = number_to_coordinate(selected);
+        field.set(x, y, field::FieldState::Circle);
+        field.print();
     }
 }
