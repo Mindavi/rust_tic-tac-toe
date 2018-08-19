@@ -25,7 +25,13 @@ fn main() {
         let mut input = String::new();
         stdin.read_line(& mut input).unwrap();
 
-        let selected = input.trim_right().parse::<usize>().unwrap();
+        let selected = match input.trim_right().parse::<usize>() {
+            Ok(selected) => selected,
+            Err(e) => {
+                println!("Error: {}", e);
+                continue;
+            },
+        };
         let (x,y) = number_to_coordinate(selected);
         field.set(x, y, field::FieldState::Circle);
         field.print();
