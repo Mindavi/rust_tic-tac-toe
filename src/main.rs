@@ -1,24 +1,20 @@
 use std::io;
 mod field;
 
-fn number_to_coordinate(number: usize) -> (usize, usize) {
-    match number {
-        1 => (0,0),
-        2 => (1,0),
-        3 => (2,0),
-        4 => (0,1),
-        5 => (1,1),
-        6 => (2,1),
-        7 => (0,2),
-        8 => (1,2),
-        9 => (2,2),
-        _ => (10,10),
+fn number_to_coordinate(number: usize, num_rows: usize) -> Result<(usize, usize), &'static str> {
+    if number <= 0 || number > field::FIELD_HEIGHT * field::FIELD_WIDTH {
+        return Err("Invalid number given");
     }
+    let index = number - 1;
+    let y = index / num_rows;
+    let x = index - (y * num_rows);
+    return Ok((x, y));
 }
 
 fn main() {
     let mut field = field::Field::new();
     let stdin = io::stdin();
+    let num_rows = field::FIELD_WIDTH;
 
     loop {
         println!("Player 1: where to put an X?");
@@ -32,7 +28,13 @@ fn main() {
                 continue;
             },
         };
-        let (x,y) = number_to_coordinate(selected);
+        let (x,y) = match number_to_coordinate(selected, num_rows) {
+            Ok(result) => (result),
+            Err(e) => {
+                println!("Error: {}", e);
+                continue;
+            },
+        };
         field.set(x, y, field::FieldState::Circle);
         field.print();
     }
