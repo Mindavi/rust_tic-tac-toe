@@ -29,7 +29,7 @@ fn main() {
     let mut current_player = &player1;
 
     loop {
-        println!("{}: where to put an X?", current_player.player_name);
+        println!("{0}: where to put an {1}?", current_player.player_name, current_player.field_type);
         let mut input = String::new();
         stdin.read_line(& mut input).unwrap();
 
