@@ -48,7 +48,6 @@ impl Field {
 
     pub fn print(&self) {
         for row in self.field.iter() {
-            println!();
             for point in row.iter() {
                 print!("{} ", point); 
             }

@@ -51,8 +51,12 @@ fn main() {
             field::FieldState::Empty => {
                 field.set(x, y, current_player.field_type);
                 field.print();
+                println!();
             },
-            _ => continue,
+            _ => {
+                println!("This field is already filled");
+                continue;
+            },
         }
 
         if current_player as *const _ == &player1 {
