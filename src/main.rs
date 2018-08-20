@@ -14,7 +14,6 @@ fn number_to_coordinate(number: usize, num_rows: usize) -> Result<(usize, usize)
 }
 
 fn main() {
-    let mut field = field::Field::new();
     let stdin = io::stdin();
     let num_rows = field::FIELD_WIDTH;
     let player1 = player::Player {
@@ -26,49 +25,59 @@ fn main() {
         player_name: "2".to_string(),
         field_type: field::FieldState::X,
     };
-    let mut current_player = &player1;
 
     loop {
-        println!("{0}: where to put an {1}?", current_player.player_name, current_player.field_type);
-        let mut input = String::new();
-        stdin.read_line(& mut input).unwrap();
+        let mut current_player = &player1;
+        let mut field = field::Field::new();
+        println!("New game started with {} and {}", player1.player_name, player2.player_name);
+        field.print();
 
-        let selected = match input.trim_right().parse::<usize>() {
-            Ok(selected) => selected,
-            Err(e) => {
-                println!("Error: {}", e);
-                continue;
-            },
-        };
-        let (x,y) = match number_to_coordinate(selected, num_rows) {
-            Ok(result) => (result),
-            Err(e) => {
-                println!("Error: {}", e);
-                continue;
-            },
-        };
+        loop {
+            println!("{0}: where to put an {1}?", current_player.player_name, current_player.field_type);
+            let mut input = String::new();
+            stdin.read_line(& mut input).unwrap();
 
-        match field.get(x, y).unwrap() {
-            field::FieldState::Empty => {
-                field.set(x, y, current_player.field_type);
-                field.print();
-                println!();
-            },
-            _ => {
-                println!("This field is already filled");
-                continue;
-            },
-        }
+            let selected = match input.trim_right().parse::<usize>() {
+                Ok(selected) => selected,
+                Err(e) => {
+                    println!("Error: {}", e);
+                    continue;
+                },
+            };
+            let (x,y) = match number_to_coordinate(selected, num_rows) {
+                Ok(result) => (result),
+                Err(e) => {
+                    println!("Error: {}", e);
+                    continue;
+                },
+            };
 
-        if winchecker::is_winning_turn(x, y, &field) {
-            println!("{} has won!", current_player.player_name);
-            break;
-        }
+            match field.get(x, y).unwrap() {
+                field::FieldState::Empty => {
+                    field.set(x, y, current_player.field_type);
+                    field.print();
+                    println!();
+                },
+                _ => {
+                    println!("This field is already filled");
+                    continue;
+                },
+            }
 
-        if current_player as *const _ == &player1 {
-            current_player = &player2;
-        } else {
-            current_player = &player1;
+            if winchecker::is_winning_turn(x, y, &field) {
+                println!("{} has won!", current_player.player_name);
+                break;
+            }
+            if winchecker::is_game_done(&field) {
+                println!("It's a tie.");
+                break;
+            }
+
+            if current_player as *const _ == &player1 {
+                current_player = &player2;
+            } else {
+                current_player = &player1;
+            }
         }
     }
 }
