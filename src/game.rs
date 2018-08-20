@@ -31,21 +31,16 @@ impl Game {
         }
     }
 
-    pub fn get_current_player(&self) -> &player::Player {
+    pub fn get_current_player(&self) -> player::Player {
         match self.current_player {
-            1 => return &self.player1,
-            2 => return &self.player2,
+            1 => return self.player1.clone(),
+            2 => return self.player2.clone(),
             _ => panic!("only 2 players"),
         };
     }
 
     pub fn do_move(&mut self, x: usize, y: usize) -> Result<GameState, &'static str> {
-        // FIXME: same as get_current_player, but putting that here gives issues with the borrow checker
-        let player = match self.current_player {
-            1 => &self.player1,
-            2 => &self.player2,
-            _ => panic!("only 2 players"),
-        };
+        let player = self.get_current_player();
 
         match self.field.get(x, y).unwrap() {
             field::FieldState::Empty => {
