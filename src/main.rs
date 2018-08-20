@@ -1,5 +1,6 @@
 use std::io;
 mod field;
+mod player;
 
 fn number_to_coordinate(number: usize, num_rows: usize) -> Result<(usize, usize), &'static str> {
     if number <= 0 || number > field::FIELD_HEIGHT * field::FIELD_WIDTH {
@@ -15,9 +16,19 @@ fn main() {
     let mut field = field::Field::new();
     let stdin = io::stdin();
     let num_rows = field::FIELD_WIDTH;
+    let player1 = player::Player {
+        player_name: "1".to_string(),
+        field_type: field::FieldState::Circle,
+    };
+
+    let player2 = player::Player {
+        player_name: "2".to_string(),
+        field_type: field::FieldState::X,
+    };
+    let mut current_player = &player1;
 
     loop {
-        println!("Player 1: where to put an X?");
+        println!("{}: where to put an X?", current_player.player_name);
         let mut input = String::new();
         stdin.read_line(& mut input).unwrap();
 
@@ -35,7 +46,19 @@ fn main() {
                 continue;
             },
         };
-        field.set(x, y, field::FieldState::Circle);
-        field.print();
+
+        match field.get(x, y).unwrap() {
+            field::FieldState::Empty => {
+                field.set(x, y, current_player.field_type);
+                field.print();
+            },
+            _ => continue,
+        }
+
+        if current_player as *const _ == &player1 {
+            current_player = &player2;
+        } else {
+            current_player = &player1;
+        }
     }
 }

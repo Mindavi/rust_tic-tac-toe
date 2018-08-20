@@ -1,8 +1,21 @@
+use std::fmt;
+
 #[derive(Clone, Copy)]
 pub enum FieldState {
     Empty,
     Circle,
     X,
+}
+
+impl fmt::Display for FieldState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let output_character = match *self {
+            FieldState::Empty => '-',
+            FieldState::Circle => 'O',
+            FieldState::X => 'X',
+        };
+        write!(f, "{}", output_character)
+    }
 }
 
 pub const FIELD_WIDTH: usize = 3;
@@ -37,13 +50,7 @@ impl Field {
         for row in self.field.iter() {
             println!();
             for point in row.iter() {
-                let mut result: char;
-                match point {
-                    FieldState::Empty => result = '-',
-                    FieldState::Circle => result = 'O',
-                    FieldState::X => result = 'X',
-                }
-                print!("{} ", result); 
+                print!("{} ", point); 
             }
             println!();
         }
