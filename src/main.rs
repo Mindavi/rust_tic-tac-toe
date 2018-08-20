@@ -30,9 +30,10 @@ fn main() {
         let mut current_player = &player1;
         let mut field = field::Field::new();
         println!("New game started with {} and {}", player1.player_name, player2.player_name);
-        field.print();
 
         loop {
+            field.print();
+            println!();
             println!("{0}: where to put an {1}?", current_player.player_name, current_player.field_type);
             let mut input = String::new();
             stdin.read_line(& mut input).unwrap();
@@ -55,8 +56,6 @@ fn main() {
             match field.get(x, y).unwrap() {
                 field::FieldState::Empty => {
                     field.set(x, y, current_player.field_type);
-                    field.print();
-                    println!();
                 },
                 _ => {
                     println!("This field is already filled");
@@ -65,10 +64,14 @@ fn main() {
             }
 
             if winchecker::is_winning_turn(x, y, &field) {
+                field.print();
+                println!();
                 println!("{} has won!", current_player.player_name);
                 break;
             }
             if winchecker::is_game_done(&field) {
+                field.print();
+                println!();
                 println!("It's a tie.");
                 break;
             }
