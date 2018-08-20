@@ -1,6 +1,7 @@
 use std::io;
 mod field;
 mod player;
+mod winchecker;
 
 fn number_to_coordinate(number: usize, num_rows: usize) -> Result<(usize, usize), &'static str> {
     if number <= 0 || number > field::FIELD_HEIGHT * field::FIELD_WIDTH {
@@ -57,6 +58,11 @@ fn main() {
                 println!("This field is already filled");
                 continue;
             },
+        }
+
+        if winchecker::is_winning_turn(x, y, &field) {
+            println!("{} has won!", current_player.player_name);
+            break;
         }
 
         if current_player as *const _ == &player1 {
